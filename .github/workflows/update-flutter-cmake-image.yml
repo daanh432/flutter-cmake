@@ -2,6 +2,7 @@ name: Update Flutter CMake Image
 
 on:
   workflow_dispatch:
+  workflow_call:
 env:
     IMAGE_NAME: flutter-cmake
 jobs:
