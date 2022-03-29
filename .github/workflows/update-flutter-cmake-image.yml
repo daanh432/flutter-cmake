@@ -4,7 +4,8 @@ on:
   workflow_dispatch:
   workflow_call:
 env:
-    IMAGE_NAME: flutter-cmake
+  REGISTRY: ghcr.io
+  IMAGE_NAME: flutter-cmake
 jobs:
   build_push_flutter_cmake_image:
     name: Build and Push Flutter CMake Image
