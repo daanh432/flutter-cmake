@@ -1,1 +1,1 @@
-FLUTTER_IMAGE_VERSION=cirrusci/flutter:main
+FLUTTER_IMAGE_VERSION=
