@@ -41,5 +41,5 @@ jobs:
         push: true
         build-args: VERSION=${{ steps.read_version.outputs.version }}
         tags: |
-          "${{ github.actor }}/${{ env.IMAGE_NAME }}:latest"
-          "${{ github.actor }}/${{ env.IMAGE_NAME }}:${{ steps.read_version.outputs.version }}"
+          "${{ env.REGISTRY }}/${{ github.actor }}/${{ env.IMAGE_NAME }}:latest"
+          "${{ env.REGISTRY }}/${{ github.actor }}/${{ env.IMAGE_NAME }}:${{ steps.read_version.outputs.version }}"
