@@ -1,0 +1,57 @@
+name: "Check Online Version"
+on:
+  workflow_dispatch:
+  schedule:
+  - cron: "0 6 * * *"
+env:
+  FLUTTER_PROJECT_NAME: flutter-cmake # Dockerhub project
+jobs:
+  get_versions:
+    name: Get Versions
+    runs-on: ubuntu-latest
+    outputs:
+      current_flutter_image_version: ${{ steps.image_docker_version.outputs.version }}
+      latest_flutter_image_version: ${{ steps.latest_versions.outputs.version }}
+    steps:
+    - name: Get Current Release
+      id: latest_versions
+      uses: luoqiz/docker-images-latest-version@master
+      with:
+        image: cirrusci/flutter
+
+    - name: Get Image Docker version
+      uses: luoqiz/docker-images-latest-version@master
+      id: image_docker_version
+      with:
+        image: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.FLUTTER_PROJECT_NAME }}
+
+  update_versions:
+    name: Update version.txt
+    runs-on: ubuntu-latest
+    needs: get_versions
+    if: needs.get_versions.outputs.latest_flutter_image_version != needs.get_versions.outputs.current_flutter_image_version
+    steps:
+    - uses: actions/checkout@v2
+    - run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        echo -e "FLUTTER_IMAGE_VERSION=${{ needs.get_versions.outputs.latest_flutter_image_version }}" > ./manifest/version.txt
+        git commit -a -m "Automatically updated version.txt."
+        git push
+  
+  request-flutter-image-build:
+    name: Request Flutter Image Build
+    runs-on: ubuntu-latest
+    needs:
+    - get_versions
+    - update_versions
+    steps:
+    - uses: convictional/trigger-workflow-and-wait@v1.3.0
+      with:
+        owner: ${{ github.repository_owner }}
+        repo: flutter_cmake
+        github_token: ${{ secrets.WORKFLOW_TOKEN }}
+        workflow_file_name: update-flutter-cmake-image.yml
+        ref: master
+        trigger_workflow: true
+        wait_workflow: false
