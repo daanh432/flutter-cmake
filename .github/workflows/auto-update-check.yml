@@ -19,6 +19,7 @@ jobs:
       with:
         image: cirrusci/flutter
 
+    - uses: actions/checkout@v2
     - name: Read Version
       id: read_version
       run: |
