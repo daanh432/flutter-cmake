@@ -1,0 +1,42 @@
+name: Update Flutter CMake Image
+
+on:
+  workflow_dispatch:
+env:
+    DAEMON_PROJECT_NAME: flutter-cmake
+jobs:
+  build_push_flutter_cmake_image:
+    name: Build and Push Flutter CMake Image
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup repo
+      uses: actions/checkout@v2
+
+    - name: Read Version
+      id: read_version
+      run: |
+        echo "::set-output name=version::$(grep -Po "FLUTTER_IMAGE_VERSION=\K[^ ]+" ./manifest/version.txt)"
+        
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v1
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build and Push
+      uses: docker/build-push-action@v2
+      with:
+        context: ./manifest/images/flutter-cmake
+        file: ./manifest/images/flutter-cmake/Dockerfile
+        platforms: linux/amd64,linux/arm64
+        push: true
+        build-args: VERSION=${{ steps.read_version.outputs.version }}
+        tags: |
+          "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DAEMON_PROJECT_NAME }}:latest"
+          "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DAEMON_PROJECT_NAME }}:${{ steps.read_version.outputs.version }}"
