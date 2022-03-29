@@ -18,6 +18,8 @@ jobs:
       uses: docker/metadata-action@v3
       with:
         images: cirrusci/flutter
+        tags: |
+          type=semver,pattern={{major}}.{{minor}}.{{patch}}
 
     - uses: actions/checkout@v2
     - name: Read Version
@@ -39,19 +41,19 @@ jobs:
         git commit -a -m "Automatically updated version.txt."
         git push
   
-  request-flutter-image-build:
-    name: Request Flutter Image Build
-    runs-on: ubuntu-latest
-    needs:
-    - get_versions
-    - update_versions
-    steps:
-    - uses: convictional/trigger-workflow-and-wait@v1.3.0
-      with:
-        owner: ${{ github.repository_owner }}
-        repo: flutter_cmake
-        github_token: ${{ secrets.WORKFLOW_TOKEN }}
-        workflow_file_name: update-flutter-cmake-image.yml
-        ref: master
-        trigger_workflow: true
-        wait_workflow: false
+#   request-flutter-image-build:
+#     name: Request Flutter Image Build
+#     runs-on: ubuntu-latest
+#     needs:
+#     - get_versions
+#     - update_versions
+#     steps:
+#     - uses: convictional/trigger-workflow-and-wait@v1.3.0
+#       with:
+#         owner: ${{ github.repository_owner }}
+#         repo: flutter_cmake
+#         github_token: ${{ secrets.WORKFLOW_TOKEN }}
+#         workflow_file_name: update-flutter-cmake-image.yml
+#         ref: master
+#         trigger_workflow: true
+#         wait_workflow: false
