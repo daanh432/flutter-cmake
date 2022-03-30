@@ -17,6 +17,9 @@ jobs:
     - name: Setup repo
       uses: actions/checkout@v2
 
+    - name: Log version to build
+      run: "echo \"To build version: ${{ inputs.version }}\"" 
+
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v1
 
