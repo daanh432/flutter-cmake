@@ -47,7 +47,8 @@ jobs:
         echo -e "${{ needs.get_versions.outputs.latest_flutter_image_version }}" > ./manifest/versions.txt
         echo -e "${{ needs.get_versions.outputs.current_flutter_image_version }}" > ./manifest/supported_versions.txt
         comm -23 ./manifest/versions.txt ./manifest/supported_versions.txt | sort -Vr > ./manifest/unprocessed_versions.txt
-        git commit -a -m "Automatically updated versions."
+        git add .
+        git commit -m "Automatically updated versions."
         git push
   
 #   request-flutter-image-build:
