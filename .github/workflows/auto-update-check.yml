@@ -46,10 +46,13 @@ jobs:
     name: Update version.txt
     runs-on: ubuntu-latest
     needs: get_versions
+    outputs:
+      version: ${{ steps.version_fetcher.outputs.version }}
     if: needs.get_versions.outputs.latest_flutter_image_version != needs.get_versions.outputs.current_flutter_image_version
     steps:
     - uses: actions/checkout@v2
-    - run: |
+    - name: Commit version updates to repo
+      run: |
         git config user.name github-actions
         git config user.email github-actions@github.com
         echo -e "${{ needs.get_versions.outputs.latest_flutter_image_version }}" > ./manifest/versions.txt
@@ -58,7 +61,12 @@ jobs:
         git add .
         git commit -m "Automatically updated versions."
         git push
+    - name: Get the latest version from the file
+      id: version_fetcher
+      run: echo "::set-output name=version::$(cat ./manifest/unprocessed_versions.txt | sort -Vr | head -n 1)"
   
   request-flutter-image-build:
     needs: update_versions
     uses: ./.github/workflows/update-flutter-cmake-image.yml
+    with:
+      version: ${{ needs.update_versions.outputs.version }}
