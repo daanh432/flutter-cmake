@@ -18,7 +18,11 @@ jobs:
       id: latest_versions
       run: |
         sudo chmod +x ./manifest/scripts/dockertags.sh
-        echo "::set-output name=tag::$(./manifest/scripts/dockertags.sh cirrusci/flutter | sed 's/^v//' | grep -P '^(\d{1,}\.){2}\d{1,}$' | sort)"
+        content="$(./manifest/scripts/dockertags.sh cirrusci/flutter | sed 's/^v//' | grep -P '^(\d{1,}\.){2}\d{1,}$' | sort)"
+        content="${content//'%'/'%25'}"
+        content="${content//$'\n'/'%0A'}"
+        content="${content//$'\r'/'%0D'}"
+        echo "::set-output name=tag::$content"
         
     - name: Log latest image Tag
       run: |
@@ -28,7 +32,11 @@ jobs:
       id: read_version
       run: |
         sudo chmod +x ./manifest/scripts/githubtags.sh
-        echo "::set-output name=version::$(./manifest/scripts/githubtags.sh daanh432/flutter-cmake | sed 's/^v//' | grep -P '^(\d{1,}\.){2}\d{1,}$' | sort)"
+        content="$(./manifest/scripts/githubtags.sh daanh432/flutter-cmake | sed 's/^v//' | grep -P '^(\d{1,}\.){2}\d{1,}$' | sort)"
+        content="${content//'%'/'%25'}"
+        content="${content//$'\n'/'%0A'}"
+        content="${content//$'\r'/'%0D'}"
+        echo "::set-output name=version::$content"
         
     - name: Log current image Tag
       run: |
