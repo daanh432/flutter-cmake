@@ -17,7 +17,7 @@ jobs:
     - name: Read Version
       id: read_version
       run: |
-        echo "::set-output name=version::$(grep -Po "FLUTTER_IMAGE_VERSION=\K[^ ]+" ./manifest/version.txt)"
+        echo "::set-output name=version::$(cat ./manifest/unprocessed_versions.txt | sort -Vr | head -n 1)"
         
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v1
