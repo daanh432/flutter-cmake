@@ -1,8 +1,11 @@
 name: Update Flutter CMake Image
 
 on:
-  workflow_dispatch:
   workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: flutter-cmake
@@ -14,11 +17,6 @@ jobs:
     - name: Setup repo
       uses: actions/checkout@v2
 
-    - name: Read Version
-      id: read_version
-      run: |
-        echo "::set-output name=version::$(cat ./manifest/unprocessed_versions.txt | sort -Vr | head -n 1)"
-        
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v1
 
@@ -39,7 +37,7 @@ jobs:
         file: ./manifest/images/flutter-cmake/Dockerfile
         platforms: linux/amd64,linux/arm64
         push: true
-        build-args: VERSION=${{ steps.read_version.outputs.version }}
+        build-args: VERSION=${{ inputs.version }}
         tags: |
           "${{ env.REGISTRY }}/${{ github.actor }}/${{ env.IMAGE_NAME }}:latest"
           "${{ env.REGISTRY }}/${{ github.actor }}/${{ env.IMAGE_NAME }}:${{ steps.read_version.outputs.version }}"
