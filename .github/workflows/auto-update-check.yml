@@ -17,7 +17,7 @@ jobs:
     - name: Get Current Release
       id: latest_versions
       run: |
-        chmod +X ./manifest/scripts/dockertags.sh
+        sudo chmod +X ./manifest/scripts/dockertags.sh
         echo "::set-output name=tag::$(./manifest/scripts/dockertags.sh cirrusci/flutter | sed 's/^v//' | grep -P '^(\d{1,}\.){2}\d{1,}$' | sort)"
         
     - name: Log latest image Tag
@@ -27,7 +27,7 @@ jobs:
     - name: Read Version
       id: read_version
       run: |
-        chmod +X ./manifest/scripts/githubtags.sh
+        sudo chmod +X ./manifest/scripts/githubtags.sh
         echo "::set-output name=version::$(./manifest/scripts/githubtags.sh daanh432/flutter-cmake | sed 's/^v//' | grep -P '^(\d{1,}\.){2}\d{1,}$' | sort)"
         
     - name: Log current image Tag
