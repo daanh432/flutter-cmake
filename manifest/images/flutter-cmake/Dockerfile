@@ -10,4 +10,5 @@ RUN apt-get update -y && apt-get install -y \
     liblzma-dev \
     appindicator3-0.1 \
     libappindicator3-dev \
+    libnotify-dev \
     && rm -rf /var/lib/apt/lists/*
